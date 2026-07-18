@@ -1,0 +1,19 @@
+# MediaPipe model binary — download separately (see README.md)
+src/models/*.task
+
+# macOS
+.DS_Store
+**/.DS_Store
+
+# Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Logs
+*.log
+
+# Node (if added later)
+node_modules/
+dist/

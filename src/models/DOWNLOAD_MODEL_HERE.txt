@@ -1,0 +1,8 @@
+# Place pose_landmarker_lite.task here
+
+Download command:
+
+  curl -L "https://storage.googleapis.com/mediapipe-models/pose_landmarker/pose_landmarker_lite/float16/latest/pose_landmarker_lite.task" \
+       -o pose_landmarker_lite.task
+
+The app will fall back to loading this model from Google CDN if the local file is not present.
