@@ -1,0 +1,7 @@
+/tmp/formright_apk/xapk_contents/app.wiztech.formright.apk
+/tmp/formright_apk/xapk_contents/config.arm64_v8a.apk
+/tmp/formright_apk/xapk_contents/config.en.apk
+/tmp/formright_apk/xapk_contents/config.fr.apk
+/tmp/formright_apk/xapk_contents/config.mdpi.apk
+/tmp/formright_apk/xapk_contents/icon.png
+/tmp/formright_apk/xapk_contents/manifest.json
