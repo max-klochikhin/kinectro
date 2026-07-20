@@ -24,7 +24,7 @@ import { BasePlugin } from './BasePlugin.js';
 import { midpoint } from '../core/VectorMath.js';
 import { EVENTS } from '../core/EventBus.js';
 
-const LEFT_HIP  = 23;
+const LEFT_HIP = 23;
 const RIGHT_HIP = 24;
 
 /** Maximum DTW delta considered "perfect" — scale this by reference length */
@@ -87,6 +87,21 @@ export class DTWComparator extends BasePlugin {
       this._loaded = false;
     }
   }
+
+  /**
+   * Load reference data from a memory object directly.
+   * @param {Object} data Reference data object with .frames
+   */
+  loadFromObject(data) {
+    if (!data || !Array.isArray(data.frames)) {
+      console.warn('[DTWComparator] Invalid reference data object. Load failed.');
+      return;
+    }
+    this._referenceHipY = data.frames.map((f) => f.hipY);
+    this._loaded = true;
+    console.info(`[DTWComparator] Reference loaded from memory object: ${this._referenceHipY.length} frames.`);
+  }
+
 
   /** Called every frame — accumulate live hipY into the current cycle buffer */
   onFrame(landmarks, timestamp) {

@@ -1,56 +1,1226 @@
 {
   "_meta": {
-    "description": "Reference skipping rope session — normalized hip Y-axis time-series.",
-    "recorded": "2024-01-01T00:00:00Z",
-    "frameCount": 40,
+    "description": "User-recorded reference session (in-frame frames only)",
+    "recorded": "2026-07-19T10:21:28.499Z",
+    "frameCount": 202,
     "sampleRateHz": 30,
     "notes": [
       "hipY is the normalized Y coordinate of the hip midpoint (landmarks 23 & 24).",
-      "Values in [0..1] where 0 = top of image, 1 = bottom.",
-      "This represents approximately 2 full jump cycles at ~60 RPM.",
-      "Replace with a real recording session using the captureReference() utility in app.js."
+      "Values in [0..1] where 0 = top of image, 1 = bottom."
     ]
   },
   "frames": [
-    { "t": 0,     "hipY": 0.620, "leftWristY": 0.480, "rightWristY": 0.478 },
-    { "t": 33,    "hipY": 0.618, "leftWristY": 0.470, "rightWristY": 0.468 },
-    { "t": 67,    "hipY": 0.610, "leftWristY": 0.455, "rightWristY": 0.453 },
-    { "t": 100,   "hipY": 0.595, "leftWristY": 0.438, "rightWristY": 0.436 },
-    { "t": 133,   "hipY": 0.572, "leftWristY": 0.425, "rightWristY": 0.423 },
-    { "t": 167,   "hipY": 0.548, "leftWristY": 0.420, "rightWristY": 0.418 },
-    { "t": 200,   "hipY": 0.530, "leftWristY": 0.430, "rightWristY": 0.428 },
-    { "t": 233,   "hipY": 0.522, "leftWristY": 0.445, "rightWristY": 0.443 },
-    { "t": 267,   "hipY": 0.525, "leftWristY": 0.462, "rightWristY": 0.460 },
-    { "t": 300,   "hipY": 0.535, "leftWristY": 0.475, "rightWristY": 0.473 },
-    { "t": 333,   "hipY": 0.550, "leftWristY": 0.478, "rightWristY": 0.476 },
-    { "t": 367,   "hipY": 0.568, "leftWristY": 0.472, "rightWristY": 0.470 },
-    { "t": 400,   "hipY": 0.585, "leftWristY": 0.460, "rightWristY": 0.458 },
-    { "t": 433,   "hipY": 0.600, "leftWristY": 0.445, "rightWristY": 0.443 },
-    { "t": 467,   "hipY": 0.612, "leftWristY": 0.435, "rightWristY": 0.433 },
-    { "t": 500,   "hipY": 0.618, "leftWristY": 0.430, "rightWristY": 0.428 },
-    { "t": 533,   "hipY": 0.620, "leftWristY": 0.432, "rightWristY": 0.430 },
-    { "t": 567,   "hipY": 0.618, "leftWristY": 0.438, "rightWristY": 0.436 },
-    { "t": 600,   "hipY": 0.612, "leftWristY": 0.448, "rightWristY": 0.446 },
-    { "t": 633,   "hipY": 0.600, "leftWristY": 0.438, "rightWristY": 0.436 },
-    { "t": 667,   "hipY": 0.580, "leftWristY": 0.422, "rightWristY": 0.420 },
-    { "t": 700,   "hipY": 0.558, "leftWristY": 0.415, "rightWristY": 0.413 },
-    { "t": 733,   "hipY": 0.538, "leftWristY": 0.420, "rightWristY": 0.418 },
-    { "t": 767,   "hipY": 0.524, "leftWristY": 0.435, "rightWristY": 0.433 },
-    { "t": 800,   "hipY": 0.520, "leftWristY": 0.450, "rightWristY": 0.448 },
-    { "t": 833,   "hipY": 0.524, "leftWristY": 0.462, "rightWristY": 0.460 },
-    { "t": 867,   "hipY": 0.534, "leftWristY": 0.470, "rightWristY": 0.468 },
-    { "t": 900,   "hipY": 0.548, "leftWristY": 0.472, "rightWristY": 0.470 },
-    { "t": 933,   "hipY": 0.565, "leftWristY": 0.466, "rightWristY": 0.464 },
-    { "t": 967,   "hipY": 0.582, "leftWristY": 0.455, "rightWristY": 0.453 },
-    { "t": 1000,  "hipY": 0.597, "leftWristY": 0.445, "rightWristY": 0.443 },
-    { "t": 1033,  "hipY": 0.610, "leftWristY": 0.438, "rightWristY": 0.436 },
-    { "t": 1067,  "hipY": 0.617, "leftWristY": 0.434, "rightWristY": 0.432 },
-    { "t": 1100,  "hipY": 0.620, "leftWristY": 0.433, "rightWristY": 0.431 },
-    { "t": 1133,  "hipY": 0.618, "leftWristY": 0.436, "rightWristY": 0.434 },
-    { "t": 1167,  "hipY": 0.613, "leftWristY": 0.440, "rightWristY": 0.438 },
-    { "t": 1200,  "hipY": 0.603, "leftWristY": 0.440, "rightWristY": 0.438 },
-    { "t": 1233,  "hipY": 0.586, "leftWristY": 0.428, "rightWristY": 0.426 },
-    { "t": 1267,  "hipY": 0.564, "leftWristY": 0.420, "rightWristY": 0.418 },
-    { "t": 1300,  "hipY": 0.545, "leftWristY": 0.418, "rightWristY": 0.416 }
+    {
+      "t": 0,
+      "hipY": 0.6365,
+      "leftWristY": 0.975,
+      "rightWristY": 0.9854
+    },
+    {
+      "t": 34,
+      "hipY": 0.636,
+      "leftWristY": 0.9685,
+      "rightWristY": 0.9687
+    },
+    {
+      "t": 67,
+      "hipY": 0.639,
+      "leftWristY": 0.9077,
+      "rightWristY": 0.9517
+    },
+    {
+      "t": 100,
+      "hipY": 0.6368,
+      "leftWristY": 0.8858,
+      "rightWristY": 0.9607
+    },
+    {
+      "t": 134,
+      "hipY": 0.6381,
+      "leftWristY": 0.8821,
+      "rightWristY": 0.9057
+    },
+    {
+      "t": 167,
+      "hipY": 0.6255,
+      "leftWristY": 0.853,
+      "rightWristY": 0.8913
+    },
+    {
+      "t": 200,
+      "hipY": 0.6233,
+      "leftWristY": 0.8357,
+      "rightWristY": 0.8859
+    },
+    {
+      "t": 234,
+      "hipY": 0.6198,
+      "leftWristY": 0.8228,
+      "rightWristY": 0.8546
+    },
+    {
+      "t": 267,
+      "hipY": 0.6112,
+      "leftWristY": 0.802,
+      "rightWristY": 0.8078
+    },
+    {
+      "t": 299,
+      "hipY": 0.6117,
+      "leftWristY": 0.7902,
+      "rightWristY": 0.7862
+    },
+    {
+      "t": 333,
+      "hipY": 0.607,
+      "leftWristY": 0.7671,
+      "rightWristY": 0.7562
+    },
+    {
+      "t": 367,
+      "hipY": 0.6066,
+      "leftWristY": 0.751,
+      "rightWristY": 0.7348
+    },
+    {
+      "t": 400,
+      "hipY": 0.6072,
+      "leftWristY": 0.746,
+      "rightWristY": 0.7196
+    },
+    {
+      "t": 434,
+      "hipY": 0.608,
+      "leftWristY": 0.7334,
+      "rightWristY": 0.7113
+    },
+    {
+      "t": 467,
+      "hipY": 0.6104,
+      "leftWristY": 0.7192,
+      "rightWristY": 0.7109
+    },
+    {
+      "t": 500,
+      "hipY": 0.614,
+      "leftWristY": 0.7176,
+      "rightWristY": 0.7067
+    },
+    {
+      "t": 534,
+      "hipY": 0.6139,
+      "leftWristY": 0.7128,
+      "rightWristY": 0.7072
+    },
+    {
+      "t": 567,
+      "hipY": 0.609,
+      "leftWristY": 0.714,
+      "rightWristY": 0.7021
+    },
+    {
+      "t": 600,
+      "hipY": 0.6093,
+      "leftWristY": 0.7174,
+      "rightWristY": 0.7041
+    },
+    {
+      "t": 634,
+      "hipY": 0.6091,
+      "leftWristY": 0.7216,
+      "rightWristY": 0.6945
+    },
+    {
+      "t": 667,
+      "hipY": 0.6084,
+      "leftWristY": 0.7231,
+      "rightWristY": 0.6913
+    },
+    {
+      "t": 700,
+      "hipY": 0.6065,
+      "leftWristY": 0.7243,
+      "rightWristY": 0.6866
+    },
+    {
+      "t": 734,
+      "hipY": 0.6052,
+      "leftWristY": 0.7156,
+      "rightWristY": 0.6784
+    },
+    {
+      "t": 767,
+      "hipY": 0.6031,
+      "leftWristY": 0.7068,
+      "rightWristY": 0.6688
+    },
+    {
+      "t": 800,
+      "hipY": 0.6032,
+      "leftWristY": 0.6915,
+      "rightWristY": 0.6539
+    },
+    {
+      "t": 834,
+      "hipY": 0.6012,
+      "leftWristY": 0.6767,
+      "rightWristY": 0.6428
+    },
+    {
+      "t": 867,
+      "hipY": 0.6,
+      "leftWristY": 0.6659,
+      "rightWristY": 0.6313
+    },
+    {
+      "t": 900,
+      "hipY": 0.5969,
+      "leftWristY": 0.652,
+      "rightWristY": 0.6196
+    },
+    {
+      "t": 934,
+      "hipY": 0.5958,
+      "leftWristY": 0.6312,
+      "rightWristY": 0.61
+    },
+    {
+      "t": 967,
+      "hipY": 0.5915,
+      "leftWristY": 0.6172,
+      "rightWristY": 0.5906
+    },
+    {
+      "t": 1000,
+      "hipY": 0.5882,
+      "leftWristY": 0.5989,
+      "rightWristY": 0.5768
+    },
+    {
+      "t": 1034,
+      "hipY": 0.5854,
+      "leftWristY": 0.5817,
+      "rightWristY": 0.5684
+    },
+    {
+      "t": 1067,
+      "hipY": 0.5857,
+      "leftWristY": 0.5791,
+      "rightWristY": 0.5611
+    },
+    {
+      "t": 1100,
+      "hipY": 0.5866,
+      "leftWristY": 0.5725,
+      "rightWristY": 0.5629
+    },
+    {
+      "t": 1134,
+      "hipY": 0.5911,
+      "leftWristY": 0.5706,
+      "rightWristY": 0.5705
+    },
+    {
+      "t": 1167,
+      "hipY": 0.6092,
+      "leftWristY": 0.5705,
+      "rightWristY": 0.5728
+    },
+    {
+      "t": 1200,
+      "hipY": 0.6313,
+      "leftWristY": 0.5542,
+      "rightWristY": 0.5755
+    },
+    {
+      "t": 1234,
+      "hipY": 0.6476,
+      "leftWristY": 0.5172,
+      "rightWristY": 0.5701
+    },
+    {
+      "t": 1267,
+      "hipY": 0.6447,
+      "leftWristY": 0.4382,
+      "rightWristY": 0.5361
+    },
+    {
+      "t": 1300,
+      "hipY": 0.6234,
+      "leftWristY": 0.3765,
+      "rightWristY": 0.4606
+    },
+    {
+      "t": 1334,
+      "hipY": 0.6008,
+      "leftWristY": 0.3896,
+      "rightWristY": 0.3266
+    },
+    {
+      "t": 1367,
+      "hipY": 0.5602,
+      "leftWristY": 0.2672,
+      "rightWristY": 0.3313
+    },
+    {
+      "t": 1400,
+      "hipY": 0.5302,
+      "leftWristY": 0.2074,
+      "rightWristY": 0.28
+    },
+    {
+      "t": 1434,
+      "hipY": 0.5255,
+      "leftWristY": 0.2388,
+      "rightWristY": 0.2096
+    },
+    {
+      "t": 1467,
+      "hipY": 0.5133,
+      "leftWristY": 0.2459,
+      "rightWristY": 0.216
+    },
+    {
+      "t": 1500,
+      "hipY": 0.5128,
+      "leftWristY": 0.2623,
+      "rightWristY": 0.2658
+    },
+    {
+      "t": 1534,
+      "hipY": 0.5237,
+      "leftWristY": 0.2869,
+      "rightWristY": 0.3021
+    },
+    {
+      "t": 1567,
+      "hipY": 0.5341,
+      "leftWristY": 0.2977,
+      "rightWristY": 0.3137
+    },
+    {
+      "t": 1600,
+      "hipY": 0.5613,
+      "leftWristY": 0.3759,
+      "rightWristY": 0.3308
+    },
+    {
+      "t": 1634,
+      "hipY": 0.5937,
+      "leftWristY": 0.4822,
+      "rightWristY": 0.4216
+    },
+    {
+      "t": 1667,
+      "hipY": 0.601,
+      "leftWristY": 0.5385,
+      "rightWristY": 0.492
+    },
+    {
+      "t": 1699,
+      "hipY": 0.597,
+      "leftWristY": 0.566,
+      "rightWristY": 0.5249
+    },
+    {
+      "t": 1734,
+      "hipY": 0.5906,
+      "leftWristY": 0.5698,
+      "rightWristY": 0.5313
+    },
+    {
+      "t": 1767,
+      "hipY": 0.5696,
+      "leftWristY": 0.5715,
+      "rightWristY": 0.571
+    },
+    {
+      "t": 1800,
+      "hipY": 0.5522,
+      "leftWristY": 0.544,
+      "rightWristY": 0.5599
+    },
+    {
+      "t": 1834,
+      "hipY": 0.5438,
+      "leftWristY": 0.541,
+      "rightWristY": 0.5451
+    },
+    {
+      "t": 1867,
+      "hipY": 0.538,
+      "leftWristY": 0.5379,
+      "rightWristY": 0.538
+    },
+    {
+      "t": 1900,
+      "hipY": 0.5392,
+      "leftWristY": 0.5425,
+      "rightWristY": 0.5424
+    },
+    {
+      "t": 1924,
+      "hipY": 0.5534,
+      "leftWristY": 0.5598,
+      "rightWristY": 0.5568
+    },
+    {
+      "t": 1967,
+      "hipY": 0.5939,
+      "leftWristY": 0.5877,
+      "rightWristY": 0.5694
+    },
+    {
+      "t": 2000,
+      "hipY": 0.6227,
+      "leftWristY": 0.593,
+      "rightWristY": 0.5674
+    },
+    {
+      "t": 2034,
+      "hipY": 0.6374,
+      "leftWristY": 0.581,
+      "rightWristY": 0.5615
+    },
+    {
+      "t": 2067,
+      "hipY": 0.626,
+      "leftWristY": 0.4995,
+      "rightWristY": 0.5507
+    },
+    {
+      "t": 2100,
+      "hipY": 0.6108,
+      "leftWristY": 0.4466,
+      "rightWristY": 0.4293
+    },
+    {
+      "t": 2134,
+      "hipY": 0.5587,
+      "leftWristY": 0.3554,
+      "rightWristY": 0.3679
+    },
+    {
+      "t": 2167,
+      "hipY": 0.5237,
+      "leftWristY": 0.3177,
+      "rightWristY": 0.3101
+    },
+    {
+      "t": 2200,
+      "hipY": 0.4967,
+      "leftWristY": 0.283,
+      "rightWristY": 0.2332
+    },
+    {
+      "t": 2234,
+      "hipY": 0.4847,
+      "leftWristY": 0.2291,
+      "rightWristY": 0.1882
+    },
+    {
+      "t": 2267,
+      "hipY": 0.4839,
+      "leftWristY": 0.2147,
+      "rightWristY": 0.1643
+    },
+    {
+      "t": 2300,
+      "hipY": 0.4832,
+      "leftWristY": 0.2113,
+      "rightWristY": 0.1528
+    },
+    {
+      "t": 2334,
+      "hipY": 0.4919,
+      "leftWristY": 0.218,
+      "rightWristY": 0.1716
+    },
+    {
+      "t": 2367,
+      "hipY": 0.4983,
+      "leftWristY": 0.2502,
+      "rightWristY": 0.2024
+    },
+    {
+      "t": 2400,
+      "hipY": 0.536,
+      "leftWristY": 0.2882,
+      "rightWristY": 0.2217
+    },
+    {
+      "t": 2434,
+      "hipY": 0.5889,
+      "leftWristY": 0.3385,
+      "rightWristY": 0.3681
+    },
+    {
+      "t": 2467,
+      "hipY": 0.6283,
+      "leftWristY": 0.4125,
+      "rightWristY": 0.3948
+    },
+    {
+      "t": 2500,
+      "hipY": 0.6255,
+      "leftWristY": 0.4338,
+      "rightWristY": 0.4567
+    },
+    {
+      "t": 2534,
+      "hipY": 0.6154,
+      "leftWristY": 0.4774,
+      "rightWristY": 0.4899
+    },
+    {
+      "t": 2567,
+      "hipY": 0.5842,
+      "leftWristY": 0.5021,
+      "rightWristY": 0.4931
+    },
+    {
+      "t": 2600,
+      "hipY": 0.5584,
+      "leftWristY": 0.5094,
+      "rightWristY": 0.4907
+    },
+    {
+      "t": 2634,
+      "hipY": 0.5441,
+      "leftWristY": 0.4994,
+      "rightWristY": 0.5207
+    },
+    {
+      "t": 2667,
+      "hipY": 0.5269,
+      "leftWristY": 0.5123,
+      "rightWristY": 0.4953
+    },
+    {
+      "t": 2700,
+      "hipY": 0.5288,
+      "leftWristY": 0.5198,
+      "rightWristY": 0.5343
+    },
+    {
+      "t": 2734,
+      "hipY": 0.5319,
+      "leftWristY": 0.531,
+      "rightWristY": 0.5525
+    },
+    {
+      "t": 2767,
+      "hipY": 0.5566,
+      "leftWristY": 0.5535,
+      "rightWristY": 0.5734
+    },
+    {
+      "t": 2800,
+      "hipY": 0.5848,
+      "leftWristY": 0.6051,
+      "rightWristY": 0.6094
+    },
+    {
+      "t": 2834,
+      "hipY": 0.6231,
+      "leftWristY": 0.642,
+      "rightWristY": 0.6263
+    },
+    {
+      "t": 2867,
+      "hipY": 0.642,
+      "leftWristY": 0.6423,
+      "rightWristY": 0.6208
+    },
+    {
+      "t": 2900,
+      "hipY": 0.6405,
+      "leftWristY": 0.6212,
+      "rightWristY": 0.6091
+    },
+    {
+      "t": 2934,
+      "hipY": 0.6295,
+      "leftWristY": 0.5804,
+      "rightWristY": 0.6053
+    },
+    {
+      "t": 2967,
+      "hipY": 0.5916,
+      "leftWristY": 0.5213,
+      "rightWristY": 0.5242
+    },
+    {
+      "t": 3000,
+      "hipY": 0.5465,
+      "leftWristY": 0.4465,
+      "rightWristY": 0.4305
+    },
+    {
+      "t": 3034,
+      "hipY": 0.5095,
+      "leftWristY": 0.3853,
+      "rightWristY": 0.3516
+    },
+    {
+      "t": 3067,
+      "hipY": 0.4853,
+      "leftWristY": 0.3394,
+      "rightWristY": 0.3116
+    },
+    {
+      "t": 3100,
+      "hipY": 0.4732,
+      "leftWristY": 0.2851,
+      "rightWristY": 0.2807
+    },
+    {
+      "t": 3134,
+      "hipY": 0.471,
+      "leftWristY": 0.2366,
+      "rightWristY": 0.2472
+    },
+    {
+      "t": 3167,
+      "hipY": 0.4804,
+      "leftWristY": 0.2178,
+      "rightWristY": 0.2289
+    },
+    {
+      "t": 3200,
+      "hipY": 0.4897,
+      "leftWristY": 0.2198,
+      "rightWristY": 0.2267
+    },
+    {
+      "t": 3234,
+      "hipY": 0.5183,
+      "leftWristY": 0.2212,
+      "rightWristY": 0.2377
+    },
+    {
+      "t": 3267,
+      "hipY": 0.5596,
+      "leftWristY": 0.2354,
+      "rightWristY": 0.2463
+    },
+    {
+      "t": 3300,
+      "hipY": 0.6004,
+      "leftWristY": 0.2589,
+      "rightWristY": 0.2593
+    },
+    {
+      "t": 3334,
+      "hipY": 0.6203,
+      "leftWristY": 0.2787,
+      "rightWristY": 0.2629
+    },
+    {
+      "t": 3367,
+      "hipY": 0.6196,
+      "leftWristY": 0.3251,
+      "rightWristY": 0.3122
+    },
+    {
+      "t": 3400,
+      "hipY": 0.6109,
+      "leftWristY": 0.3351,
+      "rightWristY": 0.3411
+    },
+    {
+      "t": 3434,
+      "hipY": 0.5865,
+      "leftWristY": 0.3793,
+      "rightWristY": 0.3437
+    },
+    {
+      "t": 3467,
+      "hipY": 0.5514,
+      "leftWristY": 0.3985,
+      "rightWristY": 0.4029
+    },
+    {
+      "t": 3500,
+      "hipY": 0.5297,
+      "leftWristY": 0.4374,
+      "rightWristY": 0.4503
+    },
+    {
+      "t": 3534,
+      "hipY": 0.5191,
+      "leftWristY": 0.4599,
+      "rightWristY": 0.4892
+    },
+    {
+      "t": 3567,
+      "hipY": 0.5258,
+      "leftWristY": 0.4947,
+      "rightWristY": 0.5248
+    },
+    {
+      "t": 3600,
+      "hipY": 0.5298,
+      "leftWristY": 0.528,
+      "rightWristY": 0.559
+    },
+    {
+      "t": 3634,
+      "hipY": 0.5586,
+      "leftWristY": 0.5746,
+      "rightWristY": 0.572
+    },
+    {
+      "t": 3667,
+      "hipY": 0.6154,
+      "leftWristY": 0.6312,
+      "rightWristY": 0.6194
+    },
+    {
+      "t": 3700,
+      "hipY": 0.6392,
+      "leftWristY": 0.6373,
+      "rightWristY": 0.6435
+    },
+    {
+      "t": 3734,
+      "hipY": 0.6534,
+      "leftWristY": 0.6384,
+      "rightWristY": 0.6408
+    },
+    {
+      "t": 3767,
+      "hipY": 0.6498,
+      "leftWristY": 0.6243,
+      "rightWristY": 0.6227
+    },
+    {
+      "t": 3800,
+      "hipY": 0.6392,
+      "leftWristY": 0.595,
+      "rightWristY": 0.611
+    },
+    {
+      "t": 3833,
+      "hipY": 0.6104,
+      "leftWristY": 0.5058,
+      "rightWristY": 0.5161
+    },
+    {
+      "t": 3867,
+      "hipY": 0.5506,
+      "leftWristY": 0.4232,
+      "rightWristY": 0.4255
+    },
+    {
+      "t": 3900,
+      "hipY": 0.5138,
+      "leftWristY": 0.3664,
+      "rightWristY": 0.3749
+    },
+    {
+      "t": 3934,
+      "hipY": 0.4987,
+      "leftWristY": 0.3117,
+      "rightWristY": 0.3067
+    },
+    {
+      "t": 3967,
+      "hipY": 0.4881,
+      "leftWristY": 0.2686,
+      "rightWristY": 0.2491
+    },
+    {
+      "t": 4000,
+      "hipY": 0.4817,
+      "leftWristY": 0.2188,
+      "rightWristY": 0.2297
+    },
+    {
+      "t": 4033,
+      "hipY": 0.4951,
+      "leftWristY": 0.1857,
+      "rightWristY": 0.205
+    },
+    {
+      "t": 4067,
+      "hipY": 0.5084,
+      "leftWristY": 0.1527,
+      "rightWristY": 0.1904
+    },
+    {
+      "t": 4100,
+      "hipY": 0.559,
+      "leftWristY": 0.148,
+      "rightWristY": 0.1941
+    },
+    {
+      "t": 4134,
+      "hipY": 0.6109,
+      "leftWristY": 0.153,
+      "rightWristY": 0.2104
+    },
+    {
+      "t": 4167,
+      "hipY": 0.6294,
+      "leftWristY": 0.1914,
+      "rightWristY": 0.1703
+    },
+    {
+      "t": 4200,
+      "hipY": 0.6256,
+      "leftWristY": 0.2077,
+      "rightWristY": 0.1686
+    },
+    {
+      "t": 4234,
+      "hipY": 0.6169,
+      "leftWristY": 0.2307,
+      "rightWristY": 0.1892
+    },
+    {
+      "t": 4267,
+      "hipY": 0.6108,
+      "leftWristY": 0.2465,
+      "rightWristY": 0.2987
+    },
+    {
+      "t": 4300,
+      "hipY": 0.5843,
+      "leftWristY": 0.281,
+      "rightWristY": 0.3393
+    },
+    {
+      "t": 4334,
+      "hipY": 0.5541,
+      "leftWristY": 0.3213,
+      "rightWristY": 0.3593
+    },
+    {
+      "t": 4367,
+      "hipY": 0.5405,
+      "leftWristY": 0.3992,
+      "rightWristY": 0.4079
+    },
+    {
+      "t": 4400,
+      "hipY": 0.5432,
+      "leftWristY": 0.4466,
+      "rightWristY": 0.4537
+    },
+    {
+      "t": 4434,
+      "hipY": 0.545,
+      "leftWristY": 0.5076,
+      "rightWristY": 0.4829
+    },
+    {
+      "t": 4467,
+      "hipY": 0.5777,
+      "leftWristY": 0.5423,
+      "rightWristY": 0.5567
+    },
+    {
+      "t": 4500,
+      "hipY": 0.6094,
+      "leftWristY": 0.5941,
+      "rightWristY": 0.6132
+    },
+    {
+      "t": 4533,
+      "hipY": 0.65,
+      "leftWristY": 0.6402,
+      "rightWristY": 0.6605
+    },
+    {
+      "t": 4567,
+      "hipY": 0.6627,
+      "leftWristY": 0.6579,
+      "rightWristY": 0.6731
+    },
+    {
+      "t": 4599,
+      "hipY": 0.6602,
+      "leftWristY": 0.6379,
+      "rightWristY": 0.6488
+    },
+    {
+      "t": 4634,
+      "hipY": 0.648,
+      "leftWristY": 0.6023,
+      "rightWristY": 0.6144
+    },
+    {
+      "t": 4667,
+      "hipY": 0.6256,
+      "leftWristY": 0.5816,
+      "rightWristY": 0.5764
+    },
+    {
+      "t": 4700,
+      "hipY": 0.58,
+      "leftWristY": 0.5261,
+      "rightWristY": 0.5061
+    },
+    {
+      "t": 4734,
+      "hipY": 0.5394,
+      "leftWristY": 0.4534,
+      "rightWristY": 0.4428
+    },
+    {
+      "t": 4767,
+      "hipY": 0.5171,
+      "leftWristY": 0.3889,
+      "rightWristY": 0.3792
+    },
+    {
+      "t": 4800,
+      "hipY": 0.5092,
+      "leftWristY": 0.3297,
+      "rightWristY": 0.3211
+    },
+    {
+      "t": 4833,
+      "hipY": 0.5089,
+      "leftWristY": 0.2952,
+      "rightWristY": 0.278
+    },
+    {
+      "t": 4867,
+      "hipY": 0.5161,
+      "leftWristY": 0.237,
+      "rightWristY": 0.2498
+    },
+    {
+      "t": 4900,
+      "hipY": 0.5251,
+      "leftWristY": 0.1868,
+      "rightWristY": 0.2098
+    },
+    {
+      "t": 4934,
+      "hipY": 0.5686,
+      "leftWristY": 0.1525,
+      "rightWristY": 0.1938
+    },
+    {
+      "t": 4967,
+      "hipY": 0.6119,
+      "leftWristY": 0.1248,
+      "rightWristY": 0.1736
+    },
+    {
+      "t": 5000,
+      "hipY": 0.6392,
+      "leftWristY": 0.1124,
+      "rightWristY": 0.1647
+    },
+    {
+      "t": 5034,
+      "hipY": 0.6318,
+      "leftWristY": 0.1453,
+      "rightWristY": 0.2113
+    },
+    {
+      "t": 5067,
+      "hipY": 0.6219,
+      "leftWristY": 0.1247,
+      "rightWristY": 0.1834
+    },
+    {
+      "t": 5100,
+      "hipY": 0.605,
+      "leftWristY": 0.1389,
+      "rightWristY": 0.1845
+    },
+    {
+      "t": 5134,
+      "hipY": 0.5627,
+      "leftWristY": 0.1752,
+      "rightWristY": 0.1809
+    },
+    {
+      "t": 5167,
+      "hipY": 0.5392,
+      "leftWristY": 0.2329,
+      "rightWristY": 0.1949
+    },
+    {
+      "t": 5200,
+      "hipY": 0.5377,
+      "leftWristY": 0.2439,
+      "rightWristY": 0.2791
+    },
+    {
+      "t": 5234,
+      "hipY": 0.5425,
+      "leftWristY": 0.2959,
+      "rightWristY": 0.348
+    },
+    {
+      "t": 5267,
+      "hipY": 0.5635,
+      "leftWristY": 0.3793,
+      "rightWristY": 0.4074
+    },
+    {
+      "t": 5300,
+      "hipY": 0.5987,
+      "leftWristY": 0.4849,
+      "rightWristY": 0.4814
+    },
+    {
+      "t": 5333,
+      "hipY": 0.632,
+      "leftWristY": 0.5513,
+      "rightWristY": 0.5395
+    },
+    {
+      "t": 5367,
+      "hipY": 0.6549,
+      "leftWristY": 0.6163,
+      "rightWristY": 0.6162
+    },
+    {
+      "t": 5400,
+      "hipY": 0.6651,
+      "leftWristY": 0.6499,
+      "rightWristY": 0.6492
+    },
+    {
+      "t": 5434,
+      "hipY": 0.6562,
+      "leftWristY": 0.6447,
+      "rightWristY": 0.6527
+    },
+    {
+      "t": 5467,
+      "hipY": 0.65,
+      "leftWristY": 0.6115,
+      "rightWristY": 0.6179
+    },
+    {
+      "t": 5500,
+      "hipY": 0.6112,
+      "leftWristY": 0.5745,
+      "rightWristY": 0.5868
+    },
+    {
+      "t": 5533,
+      "hipY": 0.5543,
+      "leftWristY": 0.5516,
+      "rightWristY": 0.5758
+    },
+    {
+      "t": 5567,
+      "hipY": 0.5207,
+      "leftWristY": 0.5109,
+      "rightWristY": 0.5116
+    },
+    {
+      "t": 5600,
+      "hipY": 0.5048,
+      "leftWristY": 0.4455,
+      "rightWristY": 0.4419
+    },
+    {
+      "t": 5633,
+      "hipY": 0.4935,
+      "leftWristY": 0.3956,
+      "rightWristY": 0.3912
+    },
+    {
+      "t": 5667,
+      "hipY": 0.496,
+      "leftWristY": 0.3425,
+      "rightWristY": 0.3539
+    },
+    {
+      "t": 5700,
+      "hipY": 0.5103,
+      "leftWristY": 0.3103,
+      "rightWristY": 0.2983
+    },
+    {
+      "t": 5734,
+      "hipY": 0.5138,
+      "leftWristY": 0.2545,
+      "rightWristY": 0.2827
+    },
+    {
+      "t": 5767,
+      "hipY": 0.5551,
+      "leftWristY": 0.2285,
+      "rightWristY": 0.2548
+    },
+    {
+      "t": 5800,
+      "hipY": 0.6043,
+      "leftWristY": 0.2041,
+      "rightWristY": 0.1991
+    },
+    {
+      "t": 5834,
+      "hipY": 0.6304,
+      "leftWristY": 0.1882,
+      "rightWristY": 0.1709
+    },
+    {
+      "t": 5867,
+      "hipY": 0.6392,
+      "leftWristY": 0.1823,
+      "rightWristY": 0.1546
+    },
+    {
+      "t": 5900,
+      "hipY": 0.6288,
+      "leftWristY": 0.1878,
+      "rightWristY": 0.1492
+    },
+    {
+      "t": 5934,
+      "hipY": 0.6218,
+      "leftWristY": 0.2048,
+      "rightWristY": 0.1933
+    },
+    {
+      "t": 5967,
+      "hipY": 0.6172,
+      "leftWristY": 0.2172,
+      "rightWristY": 0.1676
+    },
+    {
+      "t": 6000,
+      "hipY": 0.6091,
+      "leftWristY": 0.2562,
+      "rightWristY": 0.1866
+    },
+    {
+      "t": 6034,
+      "hipY": 0.6055,
+      "leftWristY": 0.2493,
+      "rightWristY": 0.316
+    },
+    {
+      "t": 6067,
+      "hipY": 0.6048,
+      "leftWristY": 0.3357,
+      "rightWristY": 0.3095
+    },
+    {
+      "t": 6100,
+      "hipY": 0.6046,
+      "leftWristY": 0.3757,
+      "rightWristY": 0.3285
+    },
+    {
+      "t": 6134,
+      "hipY": 0.6071,
+      "leftWristY": 0.406,
+      "rightWristY": 0.3181
+    },
+    {
+      "t": 6167,
+      "hipY": 0.6091,
+      "leftWristY": 0.4288,
+      "rightWristY": 0.3196
+    },
+    {
+      "t": 6200,
+      "hipY": 0.6156,
+      "leftWristY": 0.4418,
+      "rightWristY": 0.3363
+    },
+    {
+      "t": 6234,
+      "hipY": 0.618,
+      "leftWristY": 0.4451,
+      "rightWristY": 0.3647
+    },
+    {
+      "t": 6267,
+      "hipY": 0.6219,
+      "leftWristY": 0.4452,
+      "rightWristY": 0.3816
+    },
+    {
+      "t": 6300,
+      "hipY": 0.6211,
+      "leftWristY": 0.4552,
+      "rightWristY": 0.4035
+    },
+    {
+      "t": 6334,
+      "hipY": 0.6248,
+      "leftWristY": 0.4711,
+      "rightWristY": 0.419
+    },
+    {
+      "t": 6367,
+      "hipY": 0.6241,
+      "leftWristY": 0.4841,
+      "rightWristY": 0.4283
+    },
+    {
+      "t": 6400,
+      "hipY": 0.6184,
+      "leftWristY": 0.4945,
+      "rightWristY": 0.4352
+    },
+    {
+      "t": 6434,
+      "hipY": 0.6163,
+      "leftWristY": 0.5224,
+      "rightWristY": 0.4378
+    },
+    {
+      "t": 6467,
+      "hipY": 0.6183,
+      "leftWristY": 0.5682,
+      "rightWristY": 0.4473
+    },
+    {
+      "t": 6500,
+      "hipY": 0.6346,
+      "leftWristY": 0.6063,
+      "rightWristY": 0.469
+    },
+    {
+      "t": 6534,
+      "hipY": 0.6514,
+      "leftWristY": 0.649,
+      "rightWristY": 0.5096
+    },
+    {
+      "t": 6567,
+      "hipY": 0.6687,
+      "leftWristY": 0.7063,
+      "rightWristY": 0.5527
+    },
+    {
+      "t": 6600,
+      "hipY": 0.7054,
+      "leftWristY": 0.7733,
+      "rightWristY": 0.6211
+    },
+    {
+      "t": 6634,
+      "hipY": 0.7521,
+      "leftWristY": 0.8235,
+      "rightWristY": 0.7008
+    },
+    {
+      "t": 6667,
+      "hipY": 0.7784,
+      "leftWristY": 0.8766,
+      "rightWristY": 0.8164
+    },
+    {
+      "t": 6700,
+      "hipY": 0.8122,
+      "leftWristY": 0.9111,
+      "rightWristY": 0.9435
+    }
   ]
 }

@@ -17,9 +17,10 @@
 
 import { FilesetResolver, PoseLandmarker } from 'https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.14/+esm';
 import { EventBus, EVENTS } from './core/EventBus.js';
-import { JumpCounter }    from './plugins/JumpCounter.js';
+import { JumpCounter } from './plugins/JumpCounter.js';
 import { ElbowValidator } from './plugins/ElbowValidator.js';
-import { DTWComparator }  from './plugins/DTWComparator.js';
+import { DTWComparator } from './plugins/DTWComparator.js';
+import { ReferenceRecorder } from './plugins/ReferenceRecorder.js';
 
 // ── MediaPipe BlazePose connections for skeleton drawing ─────────────────
 // Each pair is [from, to] landmark index
@@ -41,16 +42,16 @@ const POSE_CONNECTIONS = [
 
 // Skeleton segment colors — grouped by body region
 const SEGMENT_COLORS = {
-  face:    'rgba(148, 163, 184, 0.7)',
-  torso:   'rgba(0, 210, 255, 0.85)',
-  armL:    'rgba(0, 245, 160, 0.9)',
-  armR:    'rgba(168, 85, 247, 0.9)',
-  legL:    'rgba(0, 245, 160, 0.75)',
-  legR:    'rgba(168, 85, 247, 0.75)',
+  face: 'rgba(148, 163, 184, 0.7)',
+  torso: 'rgba(0, 210, 255, 0.85)',
+  armL: 'rgba(0, 245, 160, 0.9)',
+  armR: 'rgba(168, 85, 247, 0.9)',
+  legL: 'rgba(0, 245, 160, 0.75)',
+  legR: 'rgba(168, 85, 247, 0.75)',
 };
 
 function connectionColor(from, to) {
-  if (from <= 8  && to <= 8)  return SEGMENT_COLORS.face;
+  if (from <= 8 && to <= 8) return SEGMENT_COLORS.face;
   if ((from === 11 || from === 12) && (to === 11 || to === 12 || to === 23 || to === 24)) return SEGMENT_COLORS.torso;
   if (from === 23 && to === 24) return SEGMENT_COLORS.torso;
   if ([11, 13, 15, 17, 19, 21].includes(from) || [13, 15, 17, 19, 21].includes(to)) return SEGMENT_COLORS.armL;
@@ -61,9 +62,9 @@ function connectionColor(from, to) {
 
 // ── State ─────────────────────────────────────────────────────────────────
 let poseLandmarker = null;
-let animFrameId    = null;
-let showSkeleton   = true;
-let lastVideoTime  = -1;
+let animFrameId = null;
+let showSkeleton = true;
+let lastVideoTime = -1;
 
 /** @type {import('./core/EventBus.js').EventBus} */
 let bus;
@@ -72,36 +73,39 @@ let bus;
 let jumpCounter;
 let elbowValidator;
 let dtwComparator;
+let referenceRecorder;
 
 /** Mini rhythm graph data */
 const graphData = new Array(60).fill(0.5);
 
 /** FPS counter state */
 let fpsFrameCount = 0;
-let fpsLastTime   = performance.now();
+let fpsLastTime = performance.now();
 
 // ── DOM Refs ──────────────────────────────────────────────────────────────
-const $loadingOverlay  = document.getElementById('loading-overlay');
-const $loadingStatus   = document.getElementById('loading-status');
-const $app             = document.getElementById('app');
-const $video           = document.getElementById('camera-video');
-const $canvas          = document.getElementById('pose-canvas');
-const $ctx             = $canvas.getContext('2d');
-const $jumpCount       = document.getElementById('jump-count');
-const $jumpBest        = document.getElementById('jump-best');
-const $accuracyValue   = document.getElementById('accuracy-value');
+const $loadingOverlay = document.getElementById('loading-overlay');
+const $loadingStatus = document.getElementById('loading-status');
+const $app = document.getElementById('app');
+const $video = document.getElementById('camera-video');
+const $canvas = document.getElementById('pose-canvas');
+const $ctx = $canvas.getContext('2d');
+const $jumpCount = document.getElementById('jump-count');
+const $jumpBest = document.getElementById('jump-best');
+const $accuracyValue = document.getElementById('accuracy-value');
 const $accuracyBarFill = document.getElementById('accuracy-bar-fill');
-const $accuracyBarTrack= document.getElementById('accuracy-bar-track');
-const $velocityValue   = document.getElementById('velocity-value');
-const $alertsList      = document.getElementById('alerts-list');
-const $dtwValue        = document.getElementById('dtw-value');
-const $fpsCounter      = document.getElementById('fps-counter');
-const $noPoseBadge     = document.getElementById('no-pose-badge');
-const $jumpFlash       = document.getElementById('jump-flash');
-const $miniGraph       = document.getElementById('mini-graph');
-const $miniCtx         = $miniGraph.getContext('2d');
-const $btnReset        = document.getElementById('btn-reset');
-const $btnToggleSkel   = document.getElementById('btn-toggle-skeleton');
+const $accuracyBarTrack = document.getElementById('accuracy-bar-track');
+const $velocityValue = document.getElementById('velocity-value');
+const $alertsList = document.getElementById('alerts-list');
+const $dtwValue = document.getElementById('dtw-value');
+const $fpsCounter = document.getElementById('fps-counter');
+const $noPoseBadge = document.getElementById('no-pose-badge');
+const $jumpFlash = document.getElementById('jump-flash');
+const $miniGraph = document.getElementById('mini-graph');
+const $miniCtx = $miniGraph.getContext('2d');
+const $btnReset = document.getElementById('btn-reset');
+const $btnToggleSkel = document.getElementById('btn-toggle-skeleton');
+const $btnRecordRef = document.getElementById('btn-record-ref');
+const $recordTimer = document.getElementById('record-timer');
 
 /** Session best jump count */
 let sessionBest = 0;
@@ -125,25 +129,29 @@ async function init() {
     // Attempts local model first, falls back to CDN
     poseLandmarker = await createPoseLandmarker(vision);
 
-    setLoadingStatus('Opening camera…');
-
-    // Step 3: Open camera stream
-    await openCamera();
-
     setLoadingStatus('Wiring plugins…');
 
-    // Step 4: Set up EventBus + plugins
+    // Step 3: Set up EventBus + plugins (before camera — so UI is always interactive)
     bus = new EventBus();
-    jumpCounter    = new JumpCounter(bus);
+    jumpCounter = new JumpCounter(bus);
     elbowValidator = new ElbowValidator(bus);
-    dtwComparator  = new DTWComparator(bus);
+    dtwComparator = new DTWComparator(bus);
+    referenceRecorder = new ReferenceRecorder(bus);
 
-    // Step 5: Wire up UI event consumers
+    // Step 4: Wire up UI event consumers + controls
     wireUIConsumers();
     wireControls();
 
-    // Step 6: Start the main loop
+    // Show the app immediately so all buttons are accessible
+    // even while we wait for camera permission
     showApp();
+
+    setLoadingStatus('Opening camera…');
+
+    // Step 5: Open camera stream
+    await openCamera();
+
+    // Step 6: Start the main loop
     requestAnimationFrame(renderLoop);
 
   } catch (err) {
@@ -201,7 +209,7 @@ async function createPoseLandmarker(vision) {
 async function openCamera() {
   const stream = await navigator.mediaDevices.getUserMedia({
     video: {
-      width:  { ideal: 1280 },
+      width: { ideal: 1280 },
       height: { ideal: 720 },
       frameRate: { ideal: 30 },
       facingMode: 'user',
@@ -240,7 +248,7 @@ function renderLoop(now) {
   // Sync canvas size to video layout size
   const { offsetWidth, offsetHeight } = $video;
   if ($canvas.width !== offsetWidth || $canvas.height !== offsetHeight) {
-    $canvas.width  = offsetWidth;
+    $canvas.width = offsetWidth;
     $canvas.height = offsetHeight;
   }
 
@@ -279,6 +287,11 @@ function renderLoop(now) {
     if (graphData.length > 60) graphData.shift();
     drawMiniGraph();
   }
+
+  // Update record timer UI if active
+  if (referenceRecorder && referenceRecorder.isRecording) {
+    $recordTimer.textContent = `⏺ ${referenceRecorder.frames.length} frames`;
+  }
 }
 
 // ─────────────────────────────────────────────────────────────────────────
@@ -290,7 +303,7 @@ function drawSkeleton(landmarks) {
   const h = $canvas.height;
 
   $ctx.save();
-  $ctx.lineCap  = 'round';
+  $ctx.lineCap = 'round';
   $ctx.lineJoin = 'round';
 
   // Draw connections
@@ -309,7 +322,7 @@ function drawSkeleton(landmarks) {
     $ctx.moveTo(ax, ay);
     $ctx.lineTo(bx, by);
     $ctx.strokeStyle = connectionColor(from, to);
-    $ctx.lineWidth   = 3;
+    $ctx.lineWidth = 3;
     $ctx.stroke();
   }
 
@@ -380,7 +393,7 @@ function drawMiniGraph() {
   fillGrad.addColorStop(1, 'rgba(168, 85, 247, 0)');
 
   ctx.strokeStyle = '#a855f7';
-  ctx.lineWidth   = 2;
+  ctx.lineWidth = 2;
   ctx.stroke();
 
   // Fill area under curve
@@ -422,7 +435,7 @@ function wireUIConsumers() {
 
   // ── DTW score ───────────────────────────────────────────────────────
   bus.on(EVENTS.DTW_SCORE, ({ delta, accuracy }) => {
-    $dtwValue.textContent    = delta;
+    $dtwValue.textContent = delta;
     $accuracyValue.textContent = accuracy;
 
     // Update progress bar
@@ -512,10 +525,10 @@ function wireControls() {
     bus.emit(EVENTS.SESSION_RESET, { timestamp: performance.now() });
 
     // Reset HUD
-    $jumpCount.textContent     = '0';
+    $jumpCount.textContent = '0';
     $velocityValue.textContent = '—';
     $accuracyValue.textContent = '—';
-    $dtwValue.textContent      = '—';
+    $dtwValue.textContent = '—';
     $accuracyBarFill.style.width = '0%';
 
     // Clear alerts
@@ -532,6 +545,100 @@ function wireControls() {
     $btnToggleSkel.setAttribute('aria-pressed', String(showSkeleton));
     $btnToggleSkel.style.color = showSkeleton ? '' : 'var(--clr-text-dim)';
   });
+
+  // Handle recording reference
+  if ($btnRecordRef) {
+    console.log('[app.js] Wiring up $btnRecordRef event listeners...');
+    bus.on('recorder:timeout', ({ timestamp }) => {
+      console.log('[app.js] Recorder timeout event received');
+      if (referenceRecorder && referenceRecorder.isRecording) {
+        stopRecording(timestamp);
+      }
+    });
+
+    $btnRecordRef.addEventListener('click', () => {
+      console.log('[app.js] Record Ref clicked!');
+      try {
+        const now = performance.now();
+        if (!referenceRecorder) {
+          throw new Error('ReferenceRecorder is not initialized!');
+        }
+        if (!referenceRecorder.isRecording) {
+          startRecording(now);
+        } else {
+          stopRecording(now);
+        }
+      } catch (err) {
+        console.error('[app.js] Error during recording toggle:', err);
+        alert('Recording Error: ' + err.message);
+      }
+    });
+  }
+
+  function startRecording(now) {
+    referenceRecorder.start(now);
+
+    $btnRecordRef.classList.add('is-recording');
+    $btnRecordRef.querySelector('span').textContent = 'Stop Rec';
+    $recordTimer.hidden = false;
+    $recordTimer.textContent = '⏺ 0 frames';
+
+    bus.emit(EVENTS.COACHING_ALERT, {
+      id: 'rec-status',
+      type: 'good',
+      icon: '⏺',
+      text: 'Recording started! Perform your jump reference...',
+      timestamp: now
+    });
+  }
+
+  function stopRecording(now) {
+    const data = referenceRecorder.stop(now);
+
+    $btnRecordRef.classList.remove('is-recording');
+    $btnRecordRef.querySelector('span').textContent = 'Record Ref';
+    $recordTimer.hidden = true;
+
+    if (data) {
+      // Hot swap in DTW Comparator
+      dtwComparator.loadFromObject(data);
+
+      // Trigger download
+      downloadJson(data, 'reference_skipping.json');
+
+      $btnRecordRef.classList.add('is-done');
+
+      bus.emit(EVENTS.COACHING_ALERT, {
+        id: 'rec-status',
+        type: 'good',
+        icon: '💾',
+        text: 'Reference recorded and updated! File downloaded.',
+        timestamp: now
+      });
+
+      setTimeout(() => {
+        $btnRecordRef.classList.remove('is-done');
+      }, 2000);
+    } else {
+      bus.emit(EVENTS.COACHING_ALERT, {
+        id: 'rec-status',
+        type: 'warn',
+        icon: '⚠️',
+        text: 'Recording discarded — too short (<15 frames) or no pose visible.',
+        timestamp: now
+      });
+    }
+  }
+
+  function downloadJson(data, filename) {
+    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    a.click();
+    URL.revokeObjectURL(url);
+  }
 }
 
 // ─────────────────────────────────────────────────────────────────────────
