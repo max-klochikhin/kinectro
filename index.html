@@ -61,6 +61,56 @@
             aria-label="Skeleton overlay canvas"
           ></canvas>
 
+          <!-- Positioning Calibration Overlay -->
+          <div id="positioning-overlay" class="positioning-overlay" role="status" aria-live="polite">
+            <div class="positioning-silhouette" aria-hidden="true">
+              <svg class="silhouette-svg" viewBox="0 0 80 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <!-- Head -->
+                <circle cx="40" cy="18" r="14" stroke="currentColor" stroke-width="3"/>
+                <!-- Torso -->
+                <line x1="40" y1="32" x2="40" y2="100" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+                <!-- Arms -->
+                <line x1="40" y1="50" x2="8" y2="78" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+                <line x1="40" y1="50" x2="72" y2="78" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+                <!-- Legs -->
+                <line x1="40" y1="100" x2="20" y2="168" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+                <line x1="40" y1="100" x2="60" y2="168" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+                <!-- Feet -->
+                <line x1="20" y1="168" x2="10" y2="180" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+                <line x1="60" y1="168" x2="70" y2="180" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+              </svg>
+            </div>
+            <div class="positioning-content">
+              <p class="positioning-label">Position yourself</p>
+              <p id="positioning-message" class="positioning-message">Step into frame</p>
+              <div id="positioning-progress" class="positioning-progress">
+                <div id="positioning-progress-fill" class="positioning-progress-fill"></div>
+              </div>
+            </div>
+
+            <!-- Exercise selector -->
+            <div class="exercise-tabs" role="tablist" aria-label="Select exercise">
+              <button class="exercise-tab is-active" data-exercise="skipping" role="tab" aria-selected="true">
+                🦘 Skipping
+              </button>
+              <button class="exercise-tab" data-exercise="squat" role="tab" aria-selected="false">
+                🏋️ Squats
+              </button>
+            </div>
+
+            <!-- Target reps picker (shown while user positions) -->
+            <div class="goal-picker" aria-label="Set your rep target">
+              <p class="goal-picker-label">Target reps</p>
+              <div class="goal-picker-controls">
+                <button id="btn-goal-dec" class="goal-btn" aria-label="Decrease target">−</button>
+                <span id="goal-value" class="goal-value">30</span>
+                <button id="btn-goal-inc" class="goal-btn" aria-label="Increase target">+</button>
+              </div>
+            </div>
+
+            <div id="positioning-arrow" class="positioning-arrow" hidden aria-hidden="true"></div>
+          </div>
+
           <!-- Pose Not Detected Badge -->
           <div id="no-pose-badge" class="no-pose-badge" role="alert" aria-live="polite" hidden>
             <span class="no-pose-icon">🔍</span>
@@ -81,6 +131,10 @@
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>
             Skeleton
           </button>
+          <button id="btn-voice" class="ctrl-btn ctrl-btn--ghost ctrl-btn--voice" aria-label="Toggle voice coaching" aria-pressed="true">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><path d="M19.07 4.93a10 10 0 0 1 0 14.14"></path><path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path></svg>
+            <span>Voice</span>
+          </button>
           <button id="btn-record-ref" class="ctrl-btn ctrl-btn--ghost ctrl-btn--record" aria-label="Record new reference">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><circle cx="12" cy="12" r="3" fill="currentColor"></circle></svg>
             <span>Record Ref</span>
@@ -97,10 +151,15 @@
           <div class="hud-card-header">
             <span class="hud-icon" aria-hidden="true">🦘</span>
             <span class="hud-label">Jumps</span>
+            <span id="goal-badge" class="goal-badge" aria-label="Rep target">/ 30</span>
           </div>
           <div class="hud-metric" aria-live="polite" aria-atomic="true">
             <span id="jump-count" class="metric-value">0</span>
             <span class="metric-unit">reps</span>
+          </div>
+          <!-- Goal progress bar -->
+          <div class="goal-bar-track" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" id="goal-bar-track">
+            <div id="goal-bar-fill" class="goal-bar-fill"></div>
           </div>
           <div class="hud-sub">
             <span class="hud-sub-label">Best session</span>

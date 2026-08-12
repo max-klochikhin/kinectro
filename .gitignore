@@ -17,3 +17,4 @@ src/models/*.task
 # Node (if added later)
 node_modules/
 dist/
+.vercel

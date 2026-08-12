@@ -162,4 +162,42 @@ export const EVENTS = {
 
   /** Fired when the camera/session is reset */
   SESSION_RESET: 'session:reset',
+
+  /**
+   * Fired every frame while positioning is being validated.
+   * Payload: { ok: boolean, message: string, direction: 'left'|'right'|'back'|'closer'|'up'|null }
+   */
+  POSITIONING_STATUS: 'positioning:status',
+
+  /**
+   * Fired once when the user enters a valid position and holds it
+   * for the required confirmation frames. Session can now begin.
+   */
+  POSITIONING_OK: 'positioning:ok',
+
+  /**
+   * Fired when the user reaches their rep target for the session.
+   * Payload: { target: number, timestamp: number }
+   */
+  GOAL_REACHED: 'goal:reached',
+
+  /**
+   * Fired by AccuracyTrend when the accuracy trend changes.
+   * Payload: { trend: 'up'|'down'|'steady', slope: number, avg: number, timestamp: number }
+   */
+  ACCURACY_TREND: 'accuracy:trend',
+
+  /**
+   * Universal rep-counted event for any exercise.
+   * Replaces JUMP_COUNTED for exercise-agnostic consumers (SessionGoal, AccuracyTrend, HUD).
+   * Payload: { exercise: string, count: number, timestamp: number, amplitude: number, rpm: number }
+   */
+  REP_COUNTED: 'rep:counted',
+
+  /**
+   * Form violation alert from an exercise validator plugin.
+   * More specific than COACHING_ALERT — carries the rule id and body side.
+   * Payload: { rule: string, side: 'left'|'right'|'both'|null, severity: 'warn'|'error', text: string, timestamp: number }
+   */
+  FORM_ALERT: 'form:alert',
 };

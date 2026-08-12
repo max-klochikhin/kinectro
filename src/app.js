@@ -21,6 +21,12 @@ import { JumpCounter } from './plugins/JumpCounter.js';
 import { ElbowValidator } from './plugins/ElbowValidator.js';
 import { DTWComparator } from './plugins/DTWComparator.js';
 import { ReferenceRecorder } from './plugins/ReferenceRecorder.js';
+import { PositioningValidator, POSITIONING_CONFIGS } from './plugins/PositioningValidator.js';
+import { VoiceCoach } from './plugins/VoiceCoach.js';
+import { SessionGoal } from './plugins/SessionGoal.js';
+import { AccuracyTrend } from './plugins/AccuracyTrend.js';
+import { SquatCounter } from './plugins/SquatCounter.js';
+import { SquatValidator } from './plugins/SquatValidator.js';
 
 // ── MediaPipe BlazePose connections for skeleton drawing ─────────────────
 // Each pair is [from, to] landmark index
@@ -74,6 +80,53 @@ let jumpCounter;
 let elbowValidator;
 let dtwComparator;
 let referenceRecorder;
+let positioningValidator;
+let voiceCoach;
+let sessionGoal;
+let accuracyTrend;
+
+/** Currently active exercise-specific plugins (swapped by loadExercise) */
+let activeExercisePlugins = [];
+
+/** Current exercise id */
+let currentExercise = 'skipping';
+
+// ── Exercise Registry ────────────────────────────────────────────────────────
+const EXERCISE_REGISTRY = {
+  skipping: {
+    label:            'Skipping',
+    icon:             '🦘',
+    hudLabel:         'Jumps',
+    positioning:      'Full body — stand 1.5 m from camera, facing forward',
+    positioningConfig: POSITIONING_CONFIGS.skipping,
+    create:      (bus) => {
+      jumpCounter    = new JumpCounter(bus);
+      elbowValidator = new ElbowValidator(bus);
+      jumpCounter.disable();
+      elbowValidator.disable();
+      return [jumpCounter, elbowValidator];
+    },
+  },
+  squat: {
+    label:            'Squats',
+    icon:             '🏋️',
+    hudLabel:         'Reps',
+    positioning:      'Move back — knees and ankles must be fully visible',
+    positioningConfig: POSITIONING_CONFIGS.squat,
+    create:      (bus) => {
+      const sc = new SquatCounter(bus);
+      const sv = new SquatValidator(bus);
+      sc.disable();
+      sv.disable();
+      // Alias so HUD consumers still work via jumpCounter reference
+      jumpCounter = sc;
+      return [sc, sv];
+    },
+  },
+};
+
+/** Whether the user has been confirmed in good position */
+let positioningConfirmed = false;
 
 /** Mini rhythm graph data */
 const graphData = new Array(60).fill(0.5);
@@ -104,8 +157,20 @@ const $miniGraph = document.getElementById('mini-graph');
 const $miniCtx = $miniGraph.getContext('2d');
 const $btnReset = document.getElementById('btn-reset');
 const $btnToggleSkel = document.getElementById('btn-toggle-skeleton');
+const $btnVoice = document.getElementById('btn-voice');
 const $btnRecordRef = document.getElementById('btn-record-ref');
 const $recordTimer = document.getElementById('record-timer');
+const $positioningOverlay = document.getElementById('positioning-overlay');
+const $positioningMessage = document.getElementById('positioning-message');
+const $positioningProgressFill = document.getElementById('positioning-progress-fill');
+const $positioningArrow = document.getElementById('positioning-arrow');
+const $positioningSilhouette = $positioningOverlay.querySelector('.positioning-silhouette');
+const $goalValue = document.getElementById('goal-value');
+const $btnGoalDec = document.getElementById('btn-goal-dec');
+const $btnGoalInc = document.getElementById('btn-goal-inc');
+const $goalBadge = document.getElementById('goal-badge');
+const $goalBarFill = document.getElementById('goal-bar-fill');
+const $goalBarTrack = document.getElementById('goal-bar-track');
 
 /** Session best jump count */
 let sessionBest = 0;
@@ -133,14 +198,33 @@ async function init() {
 
     // Step 3: Set up EventBus + plugins (before camera — so UI is always interactive)
     bus = new EventBus();
-    jumpCounter = new JumpCounter(bus);
-    elbowValidator = new ElbowValidator(bus);
+
+    // Load default exercise (creates jumpCounter + elbowValidator, both disabled)
+    activeExercisePlugins = EXERCISE_REGISTRY[currentExercise].create(bus);
+
+    // DTW comparator and reference recorder are exercise-agnostic
     dtwComparator = new DTWComparator(bus);
+    dtwComparator.disable();
+
+    // Positioning validator runs immediately
+    positioningValidator = new PositioningValidator(bus);
+
+    // ReferenceRecorder is always available
     referenceRecorder = new ReferenceRecorder(bus);
+
+    // Voice coaching
+    voiceCoach = new VoiceCoach(bus);
+
+    // Session goal
+    sessionGoal = new SessionGoal(bus, 30);
+
+    // Accuracy trend
+    accuracyTrend = new AccuracyTrend(bus);
 
     // Step 4: Wire up UI event consumers + controls
     wireUIConsumers();
     wireControls();
+    wirePositioning();
 
     // Show the app immediately so all buttons are accessible
     // even while we wait for camera permission
@@ -409,8 +493,8 @@ function drawMiniGraph() {
 // ─────────────────────────────────────────────────────────────────────────
 
 function wireUIConsumers() {
-  // ── Jump counted ────────────────────────────────────────────────────
-  bus.on(EVENTS.JUMP_COUNTED, ({ count, rpm }) => {
+  // ── Rep counted (universal — covers both skipping and squats) ───────
+  const onRepCounted = ({ count, rpm }) => {
     $jumpCount.textContent = count;
 
     // Animate the number
@@ -431,6 +515,18 @@ function wireUIConsumers() {
       sessionBest = count;
       $jumpBest.textContent = sessionBest;
     }
+
+    // Update goal progress bar
+    _updateGoalBar(count, sessionGoal?.target ?? 30);
+  };
+
+  // Only REP_COUNTED — avoids double-fire for skipping (which emits both)
+  bus.on(EVENTS.REP_COUNTED, onRepCounted);
+
+  // ── Goal reached ────────────────────────────────────────────────────
+  bus.on(EVENTS.GOAL_REACHED, () => {
+    $goalBarFill.classList.add('is-complete');
+    $goalBarFill.style.width = '100%';
   });
 
   // ── DTW score ───────────────────────────────────────────────────────
@@ -504,6 +600,94 @@ function wireUIConsumers() {
   });
 }
 
+// ─────────────────────────────────────────────────────────────────────────
+// POSITIONING OVERLAY
+// ─────────────────────────────────────────────────────────────────────────
+
+/**
+ * Wire up PositioningValidator events to the overlay UI.
+ * POSITIONING_OK  → hide overlay, enable analytical plugins.
+ * POSITIONING_STATUS → update overlay message and progress bar.
+ */
+function wirePositioning() {
+  let okFrameCount = 0;
+  const CONFIRM_FRAMES = 20;
+
+  // Reset local progress counter whenever session resets or exercise switches
+  bus.on(EVENTS.SESSION_RESET, () => { okFrameCount = 0; });
+
+  const DIRECTION_ARROWS = {
+    left: '←',
+    right: '→',
+    back: '↙',
+    closer: '↗',
+    up: '↑',
+  };
+
+  bus.on(EVENTS.POSITIONING_STATUS, ({ ok, message, direction }) => {
+    if (positioningConfirmed) return; // overlay already gone
+
+    $positioningMessage.textContent = message;
+    $positioningMessage.classList.toggle('is-ok', ok);
+    $positioningSilhouette.classList.toggle('is-ok', ok);
+
+    if (ok) {
+      okFrameCount = Math.min(okFrameCount + 1, CONFIRM_FRAMES);
+    } else {
+      okFrameCount = Math.max(okFrameCount - 2, 0);
+    }
+    $positioningProgressFill.style.width = `${(okFrameCount / CONFIRM_FRAMES) * 100}%`;
+
+    if (direction && DIRECTION_ARROWS[direction]) {
+      $positioningArrow.hidden = false;
+      $positioningArrow.textContent = DIRECTION_ARROWS[direction];
+    } else {
+      $positioningArrow.hidden = true;
+    }
+  });
+
+  bus.on(EVENTS.POSITIONING_OK, () => {
+    positioningConfirmed = true;
+    okFrameCount = CONFIRM_FRAMES;
+    $positioningProgressFill.style.width = '100%';
+    $positioningMessage.textContent = 'Good position!';
+    $positioningMessage.classList.add('is-ok');
+    $positioningSilhouette.classList.add('is-ok');
+    $positioningArrow.hidden = true;
+
+    // Small delay for user to see the confirmation, then hide
+    setTimeout(() => {
+      $positioningOverlay.classList.add('is-hidden');
+
+      // Enable exercise-specific plugins
+      activeExercisePlugins.forEach(p => p.enable());
+
+      // DTW only makes sense for skipping (reference data is skipping-specific)
+      const dtwSupported = currentExercise === 'skipping';
+      if (dtwSupported) {
+        dtwComparator.enable();
+      } else {
+        dtwComparator.disable();
+      }
+      document.getElementById('card-dtw').hidden = !dtwSupported;
+      document.getElementById('card-accuracy').hidden = !dtwSupported;
+
+      accuracyTrend.onReset();
+
+      const startMsg = currentExercise === 'squat'
+        ? 'Great position! Start squatting.'
+        : 'Great position! Start jumping.';
+      bus.emit(EVENTS.COACHING_ALERT, {
+        id: 'positioning-ok',
+        type: 'good',
+        icon: '✅',
+        text: startMsg,
+        timestamp: performance.now(),
+      });
+    }, 600);
+  });
+}
+
 function restoreIdlePlaceholder() {
   const li = document.createElement('li');
   li.className = 'alert-item alert-item--idle';
@@ -521,8 +705,21 @@ function restoreIdlePlaceholder() {
 function wireControls() {
   // Reset session
   $btnReset.addEventListener('click', () => {
-    // Reset plugin state
+    // Reset plugin state (also resets PositioningValidator back to 'checking')
     bus.emit(EVENTS.SESSION_RESET, { timestamp: performance.now() });
+
+    // Disable analytical plugins until positioning is re-confirmed
+    positioningConfirmed = false;
+    activeExercisePlugins.forEach(p => p.disable());
+    dtwComparator.disable();
+
+    // Show positioning overlay again
+    $positioningOverlay.classList.remove('is-hidden');
+    $positioningMessage.textContent = 'Step into frame';
+    $positioningMessage.classList.remove('is-ok');
+    $positioningSilhouette.classList.remove('is-ok');
+    $positioningProgressFill.style.width = '0%';
+    $positioningArrow.hidden = true;
 
     // Reset HUD
     $jumpCount.textContent = '0';
@@ -530,6 +727,9 @@ function wireControls() {
     $accuracyValue.textContent = '—';
     $dtwValue.textContent = '—';
     $accuracyBarFill.style.width = '0%';
+    $goalBarFill.style.width = '0%';
+    $goalBarFill.classList.remove('is-complete');
+    $goalBarTrack.setAttribute('aria-valuenow', '0');
 
     // Clear alerts
     $alertsList.innerHTML = '';
@@ -544,6 +744,53 @@ function wireControls() {
     showSkeleton = !showSkeleton;
     $btnToggleSkel.setAttribute('aria-pressed', String(showSkeleton));
     $btnToggleSkel.style.color = showSkeleton ? '' : 'var(--clr-text-dim)';
+  });
+
+  // Exercise selector tabs
+  document.querySelectorAll('.exercise-tab').forEach($tab => {
+    $tab.addEventListener('click', () => {
+      const name = $tab.dataset.exercise;
+      if (name === currentExercise) return;
+
+      document.querySelectorAll('.exercise-tab').forEach(t => {
+        t.classList.remove('is-active');
+        t.setAttribute('aria-selected', 'false');
+      });
+      $tab.classList.add('is-active');
+      $tab.setAttribute('aria-selected', 'true');
+
+      loadExercise(name);
+    });
+  });
+
+  // Goal picker: − / + buttons
+  $btnGoalDec.addEventListener('click', () => {
+    const next = Math.max(5, (sessionGoal?.target ?? 30) - 5);
+    sessionGoal?.setTarget(next);
+    $goalValue.textContent = next;
+    $goalBadge.textContent = `/ ${next}`;
+    _updateGoalBar(jumpCounter?.count ?? 0, next);
+  });
+
+  $btnGoalInc.addEventListener('click', () => {
+    const next = Math.min(200, (sessionGoal?.target ?? 30) + 5);
+    sessionGoal?.setTarget(next);
+    $goalValue.textContent = next;
+    $goalBadge.textContent = `/ ${next}`;
+    _updateGoalBar(jumpCounter?.count ?? 0, next);
+  });
+
+  // Toggle voice coaching
+  $btnVoice.addEventListener('click', () => {
+    if (voiceCoach.enabled) {
+      voiceCoach.disable();
+      $btnVoice.setAttribute('aria-pressed', 'false');
+      $btnVoice.style.color = 'var(--clr-text-dim)';
+    } else {
+      voiceCoach.enable();
+      $btnVoice.setAttribute('aria-pressed', 'true');
+      $btnVoice.style.color = '';
+    }
   });
 
   // Handle recording reference
@@ -587,7 +834,7 @@ function wireControls() {
       id: 'rec-status',
       type: 'good',
       icon: '⏺',
-      text: 'Recording started! Perform your jump reference...',
+      text: `Recording started! Perform your ${currentExercise} reference...`,
       timestamp: now
     });
   }
@@ -603,8 +850,8 @@ function wireControls() {
       // Hot swap in DTW Comparator
       dtwComparator.loadFromObject(data);
 
-      // Trigger download
-      downloadJson(data, 'reference_skipping.json');
+      // Trigger download — filename reflects current exercise
+      downloadJson(data, `reference_${currentExercise}.json`);
 
       $btnRecordRef.classList.add('is-done');
 
@@ -644,6 +891,71 @@ function wireControls() {
 // ─────────────────────────────────────────────────────────────────────────
 // HELPERS
 // ─────────────────────────────────────────────────────────────────────────
+
+/**
+ * Swap the active exercise plugins.
+ * Destroys existing exercise plugins, creates new ones for the chosen exercise.
+ * Does NOT touch DTW, Recorder, VoiceCoach, SessionGoal — they are universal.
+ * @param {string} name  Key in EXERCISE_REGISTRY
+ */
+function loadExercise(name) {
+  if (!EXERCISE_REGISTRY[name]) return;
+
+  // Tear down current exercise plugins
+  activeExercisePlugins.forEach(p => p.destroy());
+
+  // Reset state
+  currentExercise = name;
+  positioningConfirmed = false;
+
+  // Reset universal plugins + UI closures (incl. positioning okFrameCount)
+  bus.emit(EVENTS.SESSION_RESET, { timestamp: performance.now() });
+
+  // Create new exercise plugins (starts disabled)
+  activeExercisePlugins = EXERCISE_REGISTRY[name].create(bus);
+
+  // Update HUD label and icon
+  const ex = EXERCISE_REGISTRY[name];
+  const $hudLabel = document.querySelector('#card-jumps .hud-label');
+  const $hudIcon  = document.querySelector('#card-jumps .hud-icon');
+  if ($hudLabel) $hudLabel.textContent = ex.hudLabel;
+  if ($hudIcon)  $hudIcon.textContent  = ex.icon;
+
+  // Reset counts
+  $jumpCount.textContent = '0';
+  $velocityValue.textContent = '—';
+  $goalBarFill.style.width = '0%';
+  $goalBarFill.classList.remove('is-complete');
+  $goalBadge.textContent = `/ ${sessionGoal?.target ?? 30}`;
+
+  // Show positioning overlay again
+  $positioningOverlay.classList.remove('is-hidden');
+  $positioningMessage.textContent = ex.positioning;
+  $positioningMessage.classList.remove('is-ok');
+  $positioningSilhouette.classList.remove('is-ok');
+  $positioningProgressFill.style.width = '0%';
+  $positioningArrow.hidden = true;
+
+  // Reconfigure positioning validator for this exercise (resets state internally)
+  positioningValidator.setConfig(ex.positioningConfig);
+
+  // Hide DTW/accuracy cards for non-skipping exercises (wrong reference data)
+  const dtwSupported = name === 'skipping';
+  document.getElementById('card-dtw').hidden = !dtwSupported;
+  document.getElementById('card-accuracy').hidden = !dtwSupported;
+  if (!dtwSupported) dtwComparator.disable();
+}
+
+/**
+ * Update the goal progress bar width and aria attribute.
+ * @param {number} count  Current jump count
+ * @param {number} target Rep target
+ */
+function _updateGoalBar(count, target) {
+  const pct = target > 0 ? Math.min(100, (count / target) * 100) : 0;
+  $goalBarFill.style.width = `${pct}%`;
+  $goalBarTrack.setAttribute('aria-valuenow', Math.round(pct));
+}
 
 function setLoadingStatus(msg) {
   $loadingStatus.textContent = msg;

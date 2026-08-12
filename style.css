@@ -274,6 +274,233 @@ body {
   pointer-events: none;
 }
 
+/* ── Positioning Calibration Overlay ──────────────────────────────────── */
+
+.positioning-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  background: rgba(10, 15, 28, 0.78);
+  backdrop-filter: blur(4px);
+  transition: opacity 500ms ease, visibility 500ms ease;
+}
+
+.positioning-overlay.is-hidden {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.positioning-silhouette {
+  color: rgba(255, 255, 255, 0.18);
+  transition: color 400ms ease;
+}
+
+.positioning-silhouette.is-ok {
+  color: rgba(0, 245, 160, 0.7);
+}
+
+.silhouette-svg {
+  width: 64px;
+  height: 160px;
+  filter: drop-shadow(0 0 12px currentColor);
+}
+
+.positioning-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  text-align: center;
+}
+
+.positioning-label {
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--clr-text-dim);
+  margin: 0;
+}
+
+.positioning-message {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #fff;
+  margin: 0;
+  min-height: 1.5em;
+  transition: color 300ms ease;
+}
+
+.positioning-message.is-ok {
+  color: var(--clr-accent);
+}
+
+.positioning-progress {
+  width: 140px;
+  height: 4px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 2px;
+  overflow: hidden;
+  margin-top: 4px;
+}
+
+.positioning-progress-fill {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, var(--clr-accent), #00d2ff);
+  border-radius: 2px;
+  transition: width 100ms linear;
+}
+
+.positioning-arrow {
+  font-size: 2rem;
+  animation: arrow-pulse 1s ease-in-out infinite;
+}
+
+@keyframes arrow-pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.5; transform: scale(0.85); }
+}
+
+/* ── Exercise selector tabs (inside positioning overlay) ─────────────── */
+
+.exercise-tabs {
+  display: flex;
+  gap: 8px;
+}
+
+.exercise-tab {
+  padding: 8px 20px;
+  border-radius: 100px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--clr-text-muted);
+  font-size: 0.85rem;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  transition: all 200ms ease;
+}
+
+.exercise-tab:hover {
+  background: rgba(255, 255, 255, 0.12);
+  color: #fff;
+}
+
+.exercise-tab.is-active {
+  background: var(--clr-accent);
+  border-color: var(--clr-accent);
+  color: #0f172a;
+}
+
+/* ── Goal / Target Reps Picker (inside positioning overlay) ──────────── */
+
+.goal-picker {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 20px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  backdrop-filter: blur(8px);
+}
+
+.goal-picker-label {
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--clr-text-dim);
+  margin: 0;
+}
+
+.goal-picker-controls {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.goal-btn {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.08);
+  color: #fff;
+  font-size: 1.2rem;
+  line-height: 1;
+  cursor: pointer;
+  transition: background 150ms ease, border-color 150ms ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.goal-btn:hover {
+  background: rgba(255, 255, 255, 0.15);
+  border-color: rgba(255, 255, 255, 0.35);
+}
+
+.goal-btn:active {
+  transform: scale(0.92);
+}
+
+.goal-value {
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: #fff;
+  min-width: 3ch;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ── Goal badge + progress bar in Jump HUD card ──────────────────────── */
+
+.goal-badge {
+  margin-left: auto;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--clr-text-dim);
+  font-variant-numeric: tabular-nums;
+}
+
+.goal-bar-track {
+  width: 100%;
+  height: 3px;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 2px;
+  overflow: hidden;
+  margin: 4px 0 6px;
+}
+
+.goal-bar-fill {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, var(--clr-accent), #00d2ff);
+  border-radius: 2px;
+  transition: width 300ms ease;
+}
+
+.goal-bar-fill.is-complete {
+  background: linear-gradient(90deg, #fbbf24, #f59e0b);
+  animation: goal-pulse 600ms ease-out 3;
+}
+
+@keyframes goal-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+
+/* ── No-pose badge ────────────────────────────────────────────────────── */
+
 .no-pose-badge {
   position: absolute;
   bottom: 80px;
@@ -370,6 +597,11 @@ body {
 
 .ctrl-btn--ghost:active {
   transform: translateY(0);
+}
+
+.ctrl-btn--voice[aria-pressed="false"] {
+  color: var(--clr-text-dim);
+  opacity: 0.55;
 }
 
 .ctrl-btn--record {
