@@ -2,96 +2,96 @@
 
 ## Stack
 
-| Слой | Технология |
-|------|-----------|
-| Фронтенд | Vanilla HTML + CSS + JS (ES Modules) |
-| AI модель | MediaPipe PoseLandmarker (локальный `.task` или CDN) |
-| Хостинг | Vercel (static site) |
-| Репозиторий | https://github.com/max-klochikhin/kinectro |
-| Прод URL | https://kinectro.vercel.app |
+| Layer | Technology |
+|-------|-----------|
+| Frontend | Vanilla HTML + CSS + JS (ES Modules) |
+| AI model | MediaPipe PoseLandmarker (local `.task` or CDN fallback) |
+| Hosting | Vercel (static site) |
+| Repository | https://github.com/max-klochikhin/kinectro |
+| Production URL | https://kinectro.vercel.app |
 
-> **Важно:** камера в браузере работает **только по HTTPS**. Vercel даёт SSL бесплатно — поэтому он выбран как хостинг.
+> **Important:** the camera API in browsers only works over **HTTPS**. Vercel provides SSL for free — that's why it was chosen.
 
 ---
 
-## Первый деплой (с нуля)
+## First Deploy (from scratch)
 
-### 1. Установить Vercel CLI
+### 1. Install Vercel CLI
 ```bash
 npm install -g vercel
 ```
 
-### 2. Залогиниться
+### 2. Log in
 ```bash
 vercel login
-# Откроется браузер — подтвердить вход через GitHub/email
+# A browser window will open — confirm via GitHub or email
 ```
 
-### 3. Задеплоить в продакшн
+### 3. Deploy to production
 ```bash
 cd /path/to/kinectro
 vercel --prod --yes
 ```
 
-Vercel автоматически определит что это статический сайт (нет `package.json`),
-выложит папку `.` и создаст алиас `kinectro.vercel.app`.
+Vercel will automatically detect this as a static site (no `package.json`),
+serve the current directory, and create the `kinectro.vercel.app` alias.
 
 ---
 
-## Обновление продакшна
+## Updating Production
 
-После любых изменений в коде:
+After any code changes:
 
 ```bash
-# 1. Закоммитить изменения
+# 1. Commit changes
 git add .
-git commit -m "feat: описание изменения"
+git commit -m "feat: describe the change"
 git push origin main
 
-# 2. Задеплоить
+# 2. Deploy
 vercel --prod --yes
 ```
 
-Или настроить автодеплой через GitHub (см. ниже) — тогда шаг 2 не нужен.
+Or set up auto-deploy via GitHub (see below) — then step 2 is not needed.
 
 ---
 
-## Автодеплой через GitHub
+## Auto-deploy via GitHub
 
-1. Открыть [vercel.com/max-klochikhins-projects/kinectro](https://vercel.com/max-klochikhins-projects/kinectro)
+1. Open [vercel.com/max-klochikhins-projects/kinectro](https://vercel.com/max-klochikhins-projects/kinectro)
 2. Settings → Git → Connect Repository → `max-klochikhin/kinectro`
-3. После этого каждый `git push origin main` автоматически триггерит деплой
+3. After that, every `git push origin main` will automatically trigger a deployment
 
 ---
 
-## Локальная разработка
+## Local Development
 
-Kinectro — статический сайт, сборщик не нужен. Достаточно любого HTTP-сервера:
+Kinectro is a static site — no build step needed. Any HTTP server works:
 
 ```bash
-# Python (встроен в macOS)
+# Python (built into macOS)
 cd /path/to/kinectro
 python3 -m http.server 8081
 # → http://localhost:8081
 
-# Или через npx
+# Or via npx
 npx serve . -p 8081
 ```
 
-> Для работы камеры при локальной разработке используй `localhost` (браузеры считают его безопасным).
+> The camera works on `localhost` during local development — browsers treat it as a secure origin.
 
 ---
 
-## AI-модель (MediaPipe)
+## AI Model (MediaPipe)
 
-Приложение пытается загрузить модель локально, при неудаче — с CDN:
+The app tries to load the model locally first, falling back to CDN if not found:
 
-| Путь | Описание |
-|------|----------|
-| `src/models/pose_landmarker_lite.task` | Локальная модель (~5 MB), работает офлайн |
+| Path | Description |
+|------|-------------|
+| `src/models/pose_landmarker_lite.task` | Local model (~5 MB), works offline |
 | CDN fallback | `storage.googleapis.com/mediapipe-models/...` |
 
-Если нужен офлайн-режим — положи модель в `src/models/`. Скачать:
+To enable offline mode — place the model in `src/models/`. Download command:
 ```bash
 curl -L -o src/models/pose_landmarker_lite.task \
   "https://storage.googleapis.com/mediapipe-models/pose_landmarker/pose_landmarker_lite/float16/latest/pose_landmarker_lite.task"
@@ -99,30 +99,30 @@ curl -L -o src/models/pose_landmarker_lite.task \
 
 ---
 
-## Vercel — полезные команды
+## Vercel — Useful Commands
 
 ```bash
-vercel whoami                  # проверить авторизацию
-vercel ls                      # список деплоев
-vercel inspect <deploy-url>    # детали конкретного деплоя
-vercel rollback                # откатиться на предыдущий деплой
-vercel alias <deploy-url> kinectro.vercel.app  # переключить алиас вручную
+vercel whoami                  # check login status
+vercel ls                      # list deployments
+vercel inspect <deploy-url>    # inspect a specific deployment
+vercel rollback                # roll back to the previous deployment
+vercel alias <deploy-url> kinectro.vercel.app  # manually switch alias
 ```
 
 ---
 
-## Структура проекта
+## Project Structure
 
 ```
 kinectro/
-├── index.html               # точка входа
+├── index.html               # entry point
 ├── style.css
 ├── src/
-│   ├── app.js               # инициализация, оркестратор
+│   ├── app.js               # app initializer and orchestrator
 │   ├── core/
-│   │   ├── EventBus.js      # pub/sub шина событий
-│   │   └── VectorMath.js    # утилиты для работы с позами
-│   ├── plugins/             # аналитические модули (по одному на фичу)
+│   │   ├── EventBus.js      # pub/sub event bus
+│   │   └── VectorMath.js    # pose math utilities
+│   ├── plugins/             # analytical modules (one feature per plugin)
 │   │   ├── BasePlugin.js
 │   │   ├── JumpCounter.js
 │   │   ├── SquatCounter.js
@@ -135,13 +135,14 @@ kinectro/
 │   │   ├── ElbowValidator.js
 │   │   └── ReferenceRecorder.js
 │   ├── data/
-│   │   └── reference_skipping.json   # эталонное движение для DTW
+│   │   └── reference_skipping.json   # reference motion data for DTW
 │   └── models/
-│       └── pose_landmarker_lite.task # (опционально) локальная модель
+│       └── pose_landmarker_lite.task # (optional) local AI model
 ├── playground/
-│   └── calls.html           # UI-эксперименты
+│   └── calls.html           # UI experiments
 ├── deployment/
-│   └── DEPLOYMENT.md        # этот файл
+│   ├── DEPLOYMENT.md        # this file
+│   └── deploy.sh            # one-command deploy script
 └── research/
-    └── formright/           # материалы reverse engineering Formright APK
+    └── formright/           # Formright APK reverse engineering materials
 ```
